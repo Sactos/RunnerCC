@@ -36,3 +36,5 @@
 *.txt
 !Example/**
 .vs/**
+*.vcxproj.filters
+*.vcxproj.user
