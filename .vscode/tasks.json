@@ -1,0 +1,41 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "Create Folders",
+            "command": "mkdir",
+            "args": [
+                "-p",
+                "Linux/Debug"
+            ]
+        },
+        {
+            "type": "shell",
+            "label": "G++ Build Main",
+            "command": "/usr/bin/g++",
+            "args": [
+                "-std=c++17",
+                "-g",
+                "${workspaceRoot}/main.cpp",
+                "-o",
+                "${workspaceRoot}/Linux/Debug/main.exe",
+                "-lstdc++fs"
+            ],
+            "options": {
+                "cwd": "/usr/bin"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "G++ Tasks",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "Create Folders",
+                "G++ Build Main"
+            ],
+        }
+    ]
+}
