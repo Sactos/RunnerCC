@@ -4,11 +4,8 @@
 #include <string>
 #include <experimental/filesystem>
 using std::string;
-namespace fs = std::experimental::filesystem;
-class FSManager;
 
 class File {
-friend class FSManager;
 public:
 	const string Name;
 	const string Path;
@@ -16,6 +13,11 @@ public:
 	const string ParentPath;
 
 	//File(const string n, const string p) : Name(n), Path(p) { };
+    File(const std::experimental::filesystem::path& path) : 
+        Name(path.filename().string()), 
+        Path(path.string()),
+        Extension(path.extension().string()),
+		ParentPath(path.parent_path().string()) { };
 
     const string NameWithOut(const string& extencion) const {
         auto pos = Name.find(extencion);
@@ -37,12 +39,6 @@ public:
         return Path.substr(0, pos);
     }
 
-private:
-    File(const fs::path& path) : 
-        Name(path.filename().string()), 
-        Path(path.string()),
-        Extension(path.extension().string()),
-		ParentPath(path.parent_path().string()) { };
 };
 
 #endif

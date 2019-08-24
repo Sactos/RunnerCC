@@ -5,8 +5,6 @@
 #include <exception>
 
 class RunnerException: public std::exception {
-private:
-    const char* message;
 public:
     RunnerException(const std::string m) {
 		auto temporal = new char[m.size() + 1];
@@ -18,6 +16,10 @@ public:
     virtual const char* what() const throw() {
 		return message;
 	}
+
+private:
+    const char* message;
+    
 };
 
 #endif
