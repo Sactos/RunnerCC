@@ -2,7 +2,6 @@
 #define FSMANAGER_CPP
 
 #include "File.cpp"
-
 #include <experimental/filesystem>
 #include <string>
 #include <vector>
@@ -26,13 +25,21 @@ public:
 		}
 	}
 
-	string getCurrentPath() const {
-		auto path = fs::current_path();
-		return path.string();
-	}
-
     bool createFolder(const string& path) const {
 		return fs::create_directory(path);
+	}
+
+	bool createFile(const string& path) const {
+		if (!exists(path)) {
+			std::ofstream o(path);
+			o.close();
+			return exists(path);
+		}
+		return true;
+	}
+
+	bool exists(const string& path) const {
+		return fs::exists(path);
 	}
 
 	File getFile(const string& path) const {
@@ -40,7 +47,7 @@ public:
 		return File(p);
 	}
 
-    std::shared_ptr<vector<File>> getFilesInFolder(const string& path, vector<string>& extensions) const {
+    std::shared_ptr<vector<File>> getFilesInFolder(const string& path, const vector<string>& extensions) const {
 		if (!fs::exists(path)) {
 			return nullptr;
 		}
@@ -63,7 +70,7 @@ public:
 		return files;
 	}
 
-    std::shared_ptr<File> getFirstFileInFolder(const string& path, vector<string>& extensions) const {
+    std::shared_ptr<File> getFirstFileInFolder(const string& path, const vector<string>& extensions) const {
         auto files = getFilesInFolder(path, extensions);
         if (files == nullptr || files->size() == 0) {
             return nullptr;
@@ -72,19 +79,7 @@ public:
         return std::make_shared<File>(File(temp));
     }
 
-    bool exists(const string& path) const {
-        return fs::exists(path);
-    }
-
-    bool areFilesEqual(const string& path1, const string& path2, vector<unsigned int> &errors) {
-        auto ifEndInRRemoveIt = [](string& line) {
-			if (line.size() == 0) {
-				return;
-			}
-            if (line[line.size() - 1] == '\r') {
-                line = line.substr(0, line.size() - 1);
-            }
-        };
+    bool sameContent(const string& path1, const string& path2, vector<unsigned int> &errors) const {
         std::ifstream file1(path1);
         std::ifstream file2(path2);
         string line1, line2;
@@ -106,6 +101,37 @@ public:
         }
         return result;
     }
+
+	std::shared_ptr<vector<string>> readFile(const string& path) const {
+		std::shared_ptr<vector<string>> lines = std::make_shared<vector<string>>();
+		std::ifstream file(path);
+		string line;
+		while (!file.eof()) {
+			std::getline(file, line);
+			ifEndInRRemoveIt(line);
+			lines->push_back(line);
+		}
+		return lines;
+	}
+
+	bool writeFile(const string& path, const vector<string>& lines) const {
+		std::ofstream o(path);
+		for (auto line : lines) {
+			o << line << std::endl;
+		}
+		return true;
+	}
+
+private:
+	void ifEndInRRemoveIt(string& line) const {
+		if (line.size() == 0) {
+			return;
+		}
+		if (line[line.size() - 1] == '\r') {
+			line = line.substr(0, line.size() - 1);
+		}
+	};
+
 };
 
 #endif

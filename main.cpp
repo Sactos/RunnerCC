@@ -1,7 +1,5 @@
-#include "FSManager.cpp"
 #include "RunnerSystem.cpp"
 #include "RunnerException.cpp"
-
 #include <iostream>
 
 constexpr auto IN_PATH = "./in";
@@ -9,7 +7,7 @@ constexpr auto OUT_PATH = "./out/";
 constexpr auto EXP_PATH = "./exp/";
 constexpr auto PROJECT_PATH = "./exercise";
 constexpr auto BIN_PATH = "./bin";
-constexpr auto CLOSE_IMMEDIATELY_UPON_END = true;
+constexpr auto CONFIG_PATH = "./settings.config";
 
 void init(FSManager& fs) {
 	bool result = true;
@@ -20,7 +18,7 @@ void init(FSManager& fs) {
 	result |= fs.createFolder(PROJECT_PATH);
 	result |= fs.createFolder(BIN_PATH);
 	if (!result) {
-		throw RunnerException("ERROR: No se pudieron crear los directorios necesarios o alguno de sus archivos de configuración.");
+		throw RunnerException("ERROR: No se pudieron crear los directorios necesarios o alguno de sus archivos de configuracion.");
 	}
 }
 
@@ -71,19 +69,19 @@ void run(FSManager& fs, RunnerSystem& rcc) {
         std::cout << "Verificando: " << fileIN.Name << "... ";
 		if (!result) {
 			countErrors++;
-			std::cout << "NO SE PUDO EJECUTAR LA APLICACIÓN" << std::endl;
+			std::cout << "NO SE PUDO EJECUTAR LA APLICACION" << std::endl;
 			std::cout << "-------------------------------------------------" << std::endl;
 			continue;
 		}
 		auto fileEXP = fs.getFile(EXP_PATH + fileIN.NameWithOut(".in.txt") + ".xp.txt");
         if (!fs.exists(fileEXP.Path)) {
             notFound++;
-            std::cout << "NO SE ENCONTRÓ EL ARCHIVO EXP CORRESPONDIENTE" << std::endl;
+            std::cout << "NO SE ENCONTRO EL ARCHIVO EXP CORRESPONDIENTE" << std::endl;
             std::cout << "-------------------------------------------------" << std::endl;
             continue;
         }
         auto errors = std::make_shared<vector<unsigned int>>();
-        result = fs.areFilesEqual(fileOUT.Path, fileEXP.Path, *errors);
+        result = fs.sameContent(fileOUT.Path, fileEXP.Path, *errors);
         if (result) {
             std::cout << "OK" << std::endl;
         } else {
@@ -99,7 +97,8 @@ void run(FSManager& fs, RunnerSystem& rcc) {
 
 int main(int argc, char **argv) {
 	FSManager fs = FSManager();
-    RunnerSystem rcc = RunnerSystem();
+	Configuration config = Configuration::Load(fs, CONFIG_PATH);
+    RunnerSystem rcc = RunnerSystem(config);
 	try {
 		init(fs);
 		compileCPLUSPLUS(fs, rcc);
@@ -107,8 +106,8 @@ int main(int argc, char **argv) {
 	} catch (RunnerException& e) {
 		std::cout << e.what() << std::endl;
 	}
-	if (!CLOSE_IMMEDIATELY_UPON_END) {
-		std::cout << "Ingrese un char para terminar la ejecución..." << std::endl;
+	if (!config.getCloseImmediatelyUponEnd()) {
+		std::cout << "Ingrese un char para terminar la ejecucion..." << std::endl;
 		char i;
 		std::cin >> i;
 	}
