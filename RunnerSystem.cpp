@@ -44,7 +44,7 @@ public:
 	bool compileFileMVSCPP(const File& file, const string& pathIN, const string& pathOUT) const {
         const string options = getExtraOptions(config.getMVSCPPExtraOptions());
 		const string routeToVsDev = config.getMVSCommandLineToolsPath();
-		string preCommand = "\"" + routeToVsDev + VSDevCmd + "\"";
+		string preCommand = "\"" + fs.getFile(routeToVsDev + "/" + VSDevCmd).Path + "\"";
 		string command = "cl " + options + pathIN + "/" + file.Name + " /o " + pathOUT + "/" + file.NameNoExtension() + ".exe";
 		string task = preCommand + " && " + command;
 		int code = system(task.c_str());

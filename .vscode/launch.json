@@ -19,7 +19,7 @@
                     "ignoreFailures": true
                 }
             ],
-            "preLaunchTask": "G++ Tasks",
+            "preLaunchTask": "Debug:G++ Tasks",
             "miDebuggerPath": "/usr/bin/gdb"
         }
     ]

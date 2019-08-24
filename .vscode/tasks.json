@@ -3,7 +3,7 @@
     "tasks": [
         {
             "type": "shell",
-            "label": "Create Folders",
+            "label": "Debug:Create Folders",
             "command": "mkdir",
             "args": [
                 "-p",
@@ -12,7 +12,7 @@
         },
         {
             "type": "shell",
-            "label": "G++ Build Main",
+            "label": "Debug:G++ Build Main",
             "command": "/usr/bin/g++",
             "args": [
                 "-std=c++17",
@@ -30,12 +30,51 @@
             ]
         },
         {
-            "label": "G++ Tasks",
+            "label": "Debug:G++ Tasks",
             "dependsOrder": "sequence",
             "dependsOn": [
-                "Create Folders",
-                "G++ Build Main"
+                "Debug:Create Folders",
+                "Debug:G++ Build Main"
+            ]
+        },
+        {
+            "type": "shell",
+            "label": "Release:Create Folders",
+            "command": "mkdir",
+            "args": [
+                "-p",
+                "Linux/Release"
+            ]
+        },
+        {
+            "type": "shell",
+            "label": "Release:G++ Build Main",
+            "command": "/usr/bin/g++",
+            "args": [
+                "-std=c++17",
+                "-g",
+                "${workspaceRoot}/main.cpp",
+                "-o",
+                "${workspaceRoot}/Linux/Release/main.exe",
+                "-lstdc++fs"
             ],
+            "options": {
+                "cwd": "/usr/bin"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "Release:Tasks",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "Release:Create Folders",
+                "Release:G++ Build Main"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ]
         }
     ]
 }
