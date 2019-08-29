@@ -1,3 +1,5 @@
+#include "FSManager.cpp"
+#include "Configuration.cpp"
 #include "RunnerSystem.cpp"
 #include "RunnerException.cpp"
 #include <iostream>
@@ -9,26 +11,26 @@ constexpr auto PROJECT_PATH = "./exercise";
 constexpr auto BIN_PATH = "./bin";
 constexpr auto CONFIG_PATH = "./settings.config";
 
-void init(FSManager& fs) {
+void init() {
 	bool result = true;
     std::cout << "Inicializando..." << std::endl;
-	result |= fs.createFolder(IN_PATH);
-	result |= fs.createFolder(OUT_PATH);
-	result |= fs.createFolder(EXP_PATH);
-	result |= fs.createFolder(PROJECT_PATH);
-	result |= fs.createFolder(BIN_PATH);
+	result |= FSManager::createFolder(IN_PATH);
+	result |= FSManager::createFolder(OUT_PATH);
+	result |= FSManager::createFolder(EXP_PATH);
+	result |= FSManager::createFolder(PROJECT_PATH);
+	result |= FSManager::createFolder(BIN_PATH);
 	if (!result) {
 		throw RunnerException("ERROR: No se pudieron crear los directorios necesarios o alguno de sus archivos de configuracion.");
 	}
 }
 
-void compileCPLUSPLUS(FSManager& fs, RunnerSystem& rcc) {
+void compileCPLUSPLUS(RunnerSystem& rcc) {
     vector<string> extensions{".cpp", ".java"};
-	auto file = fs.getFirstFileInFolder(PROJECT_PATH, extensions);
+	auto file = FSManager::getFirstFileInFolder(PROJECT_PATH, extensions);
 	if (file == nullptr) {
 		throw RunnerException("ERROR: No hay archivos validos para compilar dentro de la carpeta cpp.");
 	}
-	if (!fs.clearFolder(BIN_PATH)) {
+	if (!FSManager::clearFolder(BIN_PATH)) {
 		throw RunnerException("ERROR: No se pudieron borrar los compilados (.exe) dentro de la carpeta bin.");
 	}
     std::cout << "Compilando Archivos..." << std::endl;
@@ -43,18 +45,18 @@ void compileCPLUSPLUS(FSManager& fs, RunnerSystem& rcc) {
     }
 }
 
-void run(FSManager& fs, RunnerSystem& rcc) {
-    vector<string> extensionsIN{".in.txt"};
-    auto filesIN = fs.getFilesInFolder(IN_PATH, extensionsIN);
+void run(Configuration& config, RunnerSystem& rcc) {
+    vector<string> extensionsIN{ config.getFileInExtension() };
+    auto filesIN = FSManager::getFilesInFolder(IN_PATH, extensionsIN);
     if (filesIN == nullptr || filesIN->size() == 0) {
         throw RunnerException("ERROR: No hay archivos de entrada en la carpeta in.");
     }
     vector<string> extension{".exe", ".class"};
-	auto exe = fs.getFirstFileInFolder(BIN_PATH, extension);
+	auto exe = FSManager::getFirstFileInFolder(BIN_PATH, extension);
     if (exe == nullptr) {
         throw RunnerException("ERROR: No se encontró el ejecutable dentro de la carpeta bin.");
     }
-    if (!fs.clearFolder(OUT_PATH)) {
+    if (!FSManager::clearFolder(OUT_PATH)) {
         throw RunnerException("ERROR: No se pudieron borrar los resultados de salida anteriores (out).");
     }
     std::cout << "Ejecutando Pruebas... Pruebas a ejecutar: " << filesIN->size() << std::endl;
@@ -63,8 +65,8 @@ void run(FSManager& fs, RunnerSystem& rcc) {
     unsigned int notFound = 0;
     for (auto& fileIN : *filesIN) {
         std::cout << "Ejecutando: " << fileIN.Name << "... ";
-        auto fileOUT = fs.getFile(OUT_PATH + fileIN.NameWithOut(".in.txt") + ".out.txt");
-        bool result = rcc.runTest(*exe, fileIN.Path, fileOUT.Path);
+        auto fileOUT = FSManager::fixPath(OUT_PATH + fileIN.NameWithOut(config.getFileInExtension()) + config.getFileOutExtension());
+        bool result = rcc.runTest(*exe, fileIN.Path, fileOUT);
         std::cout << "Finalizado (" << result << "/1)" << std::endl;
         std::cout << "Verificando: " << fileIN.Name << "... ";
 		if (!result) {
@@ -73,15 +75,15 @@ void run(FSManager& fs, RunnerSystem& rcc) {
 			std::cout << "-------------------------------------------------" << std::endl;
 			continue;
 		}
-		auto fileEXP = fs.getFile(EXP_PATH + fileIN.NameWithOut(".in.txt") + ".xp.txt");
-        if (!fs.exists(fileEXP.Path)) {
+		auto fileEXP = FSManager::fixPath(EXP_PATH + fileIN.NameWithOut(config.getFileInExtension()) + config.getFileExpExtension());
+        if (!FSManager::exists(fileEXP)) {
             notFound++;
             std::cout << "NO SE ENCONTRO EL ARCHIVO EXP CORRESPONDIENTE" << std::endl;
             std::cout << "-------------------------------------------------" << std::endl;
             continue;
         }
         auto errors = std::make_shared<vector<unsigned int>>();
-        result = fs.sameContent(fileOUT.Path, fileEXP.Path, *errors);
+        result = FSManager::sameContent(fileOUT, fileEXP, *errors);
         if (result) {
             std::cout << "OK" << std::endl;
         } else {
@@ -96,13 +98,12 @@ void run(FSManager& fs, RunnerSystem& rcc) {
 }
 
 int main(int argc, char **argv) {
-	FSManager fs = FSManager();
-	Configuration config = Configuration::Load(fs, CONFIG_PATH);
+	Configuration config = Configuration::Load(CONFIG_PATH);
     RunnerSystem rcc = RunnerSystem(config);
 	try {
-		init(fs);
-		compileCPLUSPLUS(fs, rcc);
-        run(fs, rcc);
+		init();
+		compileCPLUSPLUS(rcc);
+        run(config, rcc);
 	} catch (RunnerException& e) {
 		std::cout << e.what() << std::endl;
 	}
