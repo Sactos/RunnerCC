@@ -12,7 +12,6 @@ public:
     const string Extension;
 	const string ParentPath;
 
-	//File(const string n, const string p) : Name(n), Path(p) { };
     File(const std::experimental::filesystem::path& path) : 
         Name(path.filename().string()), 
         Path(path.string()),
@@ -39,6 +38,8 @@ public:
         return Path.substr(0, pos);
     }
 
+private:
+	File() {}
 };
 
 #endif

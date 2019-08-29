@@ -1,6 +1,7 @@
 #ifndef RUNNERSYSTEM_CPP
 #define RUNNERSYSTEM_CPP
 
+#include "FSManager.cpp"
 #include "Configuration.cpp"
 #include <string>
 #include <vector>
@@ -9,7 +10,7 @@
 using std::string;
 using std::vector;
 
-enum RSCompailerType {
+enum RSCompilerType {
 	//C++
 	ANY_CPP,
 	GPP,
@@ -22,10 +23,10 @@ enum RSCompailerType {
 
 class RunnerSystem {
 public:
-	RunnerSystem(Configuration& c) : config(c), fs() { }
+	RunnerSystem(Configuration& c) : config(c) { }
 
 	bool compileFile(const File& file, const string& pathIN, const string& pathOUT) const {
-        RSCompailerType type = getCompailerType(file);
+        RSCompilerType type = getCompilerType(file);
 		switch(type) {
             case JAVA:
                 return compileFileJAVA(file, pathIN, pathOUT);
@@ -44,7 +45,7 @@ public:
 	bool compileFileMVSCPP(const File& file, const string& pathIN, const string& pathOUT) const {
         const string options = getExtraOptions(config.getMVSCPPExtraOptions());
 		const string routeToVsDev = config.getMVSCommandLineToolsPath();
-		string preCommand = "\"" + fs.getFile(routeToVsDev + "/" + VSDevCmd).Path + "\"";
+		string preCommand = "\"" + FSManager::fixPath(routeToVsDev + "/" + VSDevCmd) + "\"";
 		string command = "cl " + options + pathIN + "/" + file.Name + " /o " + pathOUT + "/" + file.NameNoExtension() + ".exe";
 		string task = preCommand + " && " + command;
 		int code = system(task.c_str());
@@ -67,7 +68,7 @@ public:
 	}
 
     bool runTest(const File& file, const string& pathIN, const string& pathOUT) {
-		RSCompailerType type = getTestType(file);
+		RSCompilerType type = getTestType(file);
 		switch(type) {
             case JAVA:
                 return runTestJAVA(file, pathIN, pathOUT);
@@ -94,9 +95,8 @@ private:
 	const string VSDevCmd = "VsDevCmd.bat";
 
 	const Configuration& config;
-	const FSManager fs;
 
-	RSCompailerType getTestType(const File& file) const {
+	RSCompilerType getTestType(const File& file) const {
 		if (file.Extension == ".exe")
 			return ANY_CPP;
 		if (file.Extension == ".class")
@@ -104,10 +104,10 @@ private:
 		return UNKNOWN;
 	}
 
-    RSCompailerType getCompailerType(const File& file) const {
+    RSCompilerType getCompilerType(const File& file) const {
         if (file.Extension == ".cpp") {
 #if _WINDOWS_
-			if (fs.exists(fs.getFile(config.getMVSCommandLineToolsPath() + "/" + VSDevCmd).Path)) {
+			if (FSManager::exists(FSManager::fixPath(config.getMVSCommandLineToolsPath() + "/" + VSDevCmd))) {
 				return MVSCPP;
 			}
             return GPP;
