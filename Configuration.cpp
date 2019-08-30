@@ -2,115 +2,85 @@
 #define CONFIGURATION_CPP
 
 #include "FSManager.cpp"
+#include <map>
 #include <string>
-using std::string;
 
 class Configuration {
 public:
-	const string& getMVSCommandLineToolsPath() const {
-		return s_MVSCommandLineToolsPath;
+	const std::string& getMVSCommandLineToolsPath() const {
+		return data.at("Compiler:MVSCommandLineToolsPath");
 	}
 
-	const string& getJavaExtraOptions() const {
-		return s_JavaExtraOptions;
+	const std::string& getJavaExtraOptions() const {
+		return data.at("Compiler:JavaExtraOptions");
 	}
 
-	const string& getGPPExtraOptions() const {
-		return s_GPPExtraOptions;
+	const std::string& getGPPExtraOptions() const {
+		return data.at("Compiler:GPPExtraOptions");
 	}
 
-	const string& getMVSCPPExtraOptions() const {
-		return s_MVSCPPExtraOptions;
+	const std::string& getMVSCPPExtraOptions() const {
+		return data.at("Compiler:MVSCPPExtraOptions");
 	}
 
 	const bool getCloseImmediatelyUponEnd() const {
-		return s_CloseImmediatelyUponEnd;
+		return data.at("Other:CloseImmediatelyUponEnd") == "true";
 	}
 
-	const string& getFileInExtension() const {
-		return s_FileInExtension;
+	const std::string& getFileInExtension() const {
+		return data.at("File:InExtension");
 	}
 
-	const string& getFileOutExtension() const {
-		return s_FileOutExtension;
+	const std::string& getFileOutExtension() const {
+		return data.at("File:OutExtension");
 	}
 
-	const string& getFileExpExtension() const {
-		return s_FileExpExtension;
+	const std::string& getFileExpExtension() const {
+		return data.at("File:ExpExtension");
 	}
 
-	static const Configuration Load(const string& path) {
-        const string MVSCommandLineToolsPath = "Compiler:MVSCommandLineToolsPath";
-        const string JavaExtraOptions = "Compiler:JavaExtraOptions";
-        const string GPPExtraOptions = "Compiler:GPPExtraOptions";
-        const string MVSCPPExtraOptions = "Compiler:MVSCPPExtraOptions";
-        const string CloseImmediatelyUponEnd = "Other:CloseImmediatelyUponEnd";
-		const string FileInExtension = "File:InExtension";
-		const string FileOutExtension = "File:OutExtension";
-		const string FileExpExtension = "File:ExpExtension";
-
-		Configuration config = Configuration();
+	static const Configuration Load(const std::string& path) {
+        std::map<const std::string, std::string> defaultConfig{
+            {"Compiler:MVSCommandLineToolsPath","C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\Common7\\Tools\\"},
+            {"Compiler:JavaExtraOptions", ""},
+            {"Compiler:GPPExtraOptions", ""},
+            {"Compiler:MVSCPPExtraOptions", ""},
+            {"Other:CloseImmediatelyUponEnd", "false"},
+    		{"File:InExtension", ".in.txt"},
+		    {"File:OutExtension", ".out.txt"},
+		    {"File:ExpExtension", ".xp.txt"},
+        };
+		Configuration config = Configuration(defaultConfig);
 		if (!FSManager::exists(path)) {
-			vector<string> defaultConfig{
-				MVSCommandLineToolsPath + "=",
-				JavaExtraOptions + "=",
-				GPPExtraOptions + "=",
-				MVSCPPExtraOptions + "=",
-				CloseImmediatelyUponEnd + "=false",
-				FileInExtension + "=" + config.s_FileInExtension,
-				FileOutExtension + "=" + config.s_FileOutExtension,
-				FileExpExtension + "=" + config.s_FileExpExtension,
-			};
-			FSManager::writeFile(path, defaultConfig);
+			vector<std::string> dc;
+            std::transform(defaultConfig.cbegin(), defaultConfig.cend(), std::back_inserter(dc), 
+                [](auto &pair) {
+                    return pair.first + "=" + pair.second; 
+                });
+			FSManager::writeFile(path, dc);
 		}
 		auto lines = FSManager::readFile(path);
-		for (string line : *lines) {
+		for (auto line : *lines) {
 			auto pos = line.find("=");
 			if (pos != std::string::npos) {
-				string key = line.substr(0, pos);
-				string value = line.substr(pos + 1, line.size());
-				if (key == MVSCommandLineToolsPath)
-					config.s_MVSCommandLineToolsPath = value;
-				else if (key == JavaExtraOptions)
-					config.s_JavaExtraOptions = value;
-				else if (key == GPPExtraOptions)
-					config.s_GPPExtraOptions = value;
-				else if (key == MVSCPPExtraOptions)
-					config.s_MVSCPPExtraOptions = value;
-				else if (key == CloseImmediatelyUponEnd)
-					config.s_CloseImmediatelyUponEnd = (value == "true");
-                else if (key == FileInExtension)
-					config.s_FileInExtension = value;
-                else if (key == FileOutExtension)
-					config.s_FileOutExtension = value;
-                else if (key == FileExpExtension)
-					config.s_FileExpExtension = value;
+				auto key = line.substr(0, pos);
+				auto value = line.substr(pos + 1, line.size());
+                if (config.data.find(key) != config.data.end()) {
+                    config.data[key] = value;
+                }
 			}
 		}
 		return config;
 	}
 
 private:
-	string s_MVSCommandLineToolsPath;
-	string s_JavaExtraOptions;
-	string s_GPPExtraOptions;
-	string s_MVSCPPExtraOptions;
-	bool s_CloseImmediatelyUponEnd;
-	string s_FileInExtension;
-	string s_FileOutExtension;
-	string s_FileExpExtension;
+    std::map<const std::string, std::string> data;
 
-	Configuration() { 
-		s_MVSCommandLineToolsPath = "";
-		s_JavaExtraOptions = "";
-		s_GPPExtraOptions = "";
-		s_MVSCPPExtraOptions = "";
-		s_CloseImmediatelyUponEnd = false;
-		s_FileInExtension = ".in.txt";
-		s_FileOutExtension = ".out.txt";
-		s_FileExpExtension = ".xp.txt";
-	}
+    Configuration() { }
 
+	Configuration(const std::map<const std::string, std::string> defaultValues) {
+        data = defaultValues;
+    }
 };
 
 #endif
