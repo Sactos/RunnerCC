@@ -3,14 +3,13 @@
 
 #include <string>
 #include <experimental/filesystem>
-using std::string;
 
 class File {
 public:
-	const string Name;
-	const string Path;
-    const string Extension;
-	const string ParentPath;
+	const std::string Name;
+	const std::string Path;
+    const std::string Extension;
+	const std::string ParentPath;
 
     File(const std::experimental::filesystem::path& path) : 
         Name(path.filename().string()), 
@@ -18,21 +17,21 @@ public:
         Extension(path.extension().string()),
 		ParentPath(path.parent_path().string()) { };
 
-    const string NameWithOut(const string& extencion) const {
+    const std::string NameWithOut(const std::string& extencion) const {
         auto pos = Name.find(extencion);
-        if (pos == string::npos) {
+        if (pos == std::string::npos) {
             return Name;
         }
         return Name.substr(0, pos);
     }
 
-    const string NameNoExtension() const {
+    const std::string NameNoExtension() const {
         return NameWithOut(Extension);
     }
 
-    const string PathNoExtension() const {
+    const std::string PathNoExtension() const {
         auto pos = Path.find(Extension);
-        if (pos == string::npos) {
+        if (pos == std::string::npos) {
             return Name;
         }
         return Path.substr(0, pos);

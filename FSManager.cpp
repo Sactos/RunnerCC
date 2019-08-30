@@ -8,13 +8,11 @@
 #include <memory>
 #include <fstream>
 #include <algorithm>
-
 using std::string;
 using std::vector;
 namespace fs = std::experimental::filesystem;
 
 namespace FSManager {
-
 	namespace {
 		static void ifEndInRRemoveIt(string& line) {
 			if (line.size() == 0) {
