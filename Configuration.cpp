@@ -8,38 +8,38 @@
 class Configuration {
 public:
 	const std::string& getMVSCommandLineToolsPath() const {
-		return data.at("Compiler:MVSCommandLineToolsPath");
+		return _data.at("Compiler:MVSCommandLineToolsPath");
 	}
 
 	const std::string& getJavaExtraOptions() const {
-		return data.at("Compiler:JavaExtraOptions");
+		return _data.at("Compiler:JavaExtraOptions");
 	}
 
 	const std::string& getGPPExtraOptions() const {
-		return data.at("Compiler:GPPExtraOptions");
+		return _data.at("Compiler:GPPExtraOptions");
 	}
 
 	const std::string& getMVSCPPExtraOptions() const {
-		return data.at("Compiler:MVSCPPExtraOptions");
+		return _data.at("Compiler:MVSCPPExtraOptions");
 	}
 
 	const bool getCloseImmediatelyUponEnd() const {
-		return data.at("Other:CloseImmediatelyUponEnd") == "true";
+		return _data.at("Other:CloseImmediatelyUponEnd") == "true";
 	}
 
 	const std::string& getFileInExtension() const {
-		return data.at("File:InExtension");
+		return _data.at("File:InExtension");
 	}
 
 	const std::string& getFileOutExtension() const {
-		return data.at("File:OutExtension");
+		return _data.at("File:OutExtension");
 	}
 
 	const std::string& getFileExpExtension() const {
-		return data.at("File:ExpExtension");
+		return _data.at("File:ExpExtension");
 	}
 
-	static const Configuration Load(const std::string& path) {
+	static const Configuration load(const std::string& path) {
         std::map<const std::string, std::string> defaultConfig{
             {"Compiler:MVSCommandLineToolsPath","C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\Common7\\Tools\\"},
             {"Compiler:JavaExtraOptions", ""},
@@ -50,23 +50,24 @@ public:
 		    {"File:OutExtension", ".out.txt"},
 		    {"File:ExpExtension", ".xp.txt"},
         };
+        auto file = FSManager::getFile(path);
 		Configuration config = Configuration(defaultConfig);
-		if (!FSManager::exists(path)) {
+		if (!file.exists()) {
 			vector<std::string> dc;
             std::transform(defaultConfig.cbegin(), defaultConfig.cend(), std::back_inserter(dc), 
                 [](auto &pair) {
                     return pair.first + "=" + pair.second; 
                 });
-			FSManager::writeFile(path, dc);
+			file.write(dc);
 		}
-		auto lines = FSManager::readFile(path);
+		auto lines = file.read();
 		for (auto line : *lines) {
 			auto pos = line.find("=");
 			if (pos != std::string::npos) {
 				auto key = line.substr(0, pos);
 				auto value = line.substr(pos + 1, line.size());
-                if (config.data.find(key) != config.data.end()) {
-                    config.data[key] = value;
+                if (config._data.find(key) != config._data.end()) {
+                    config._data[key] = value;
                 }
 			}
 		}
@@ -74,12 +75,12 @@ public:
 	}
 
 private:
-    std::map<const std::string, std::string> data;
+    std::map<const std::string, std::string> _data;
 
     Configuration() { }
 
 	Configuration(const std::map<const std::string, std::string> defaultValues) {
-        data = defaultValues;
+        _data = defaultValues;
     }
 };
 

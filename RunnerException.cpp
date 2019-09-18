@@ -10,15 +10,15 @@ public:
 		auto temporal = new char[m.size() + 1];
 		std::copy(m.cbegin(), m.cend(), temporal);
 		temporal[m.size()] = '\0';
-		message = temporal;
+		_message = temporal;
 	}
 
     virtual const char* what() const throw() {
-		return message;
+		return _message;
 	}
 
 private:
-    const char* message;
+    const char* _message;
 };
 
 #endif
