@@ -45,7 +45,7 @@ public:
         const string options = getExtraOptions(config.getMVSCPPExtraOptions());
 		const string routeToVsDev = config.getMVSCommandLineToolsPath();
 		string preCommand = "\"" + FSManager::fixPath(routeToVsDev + "/" + VSDevCmd) + "\"";
-		string command = "cl " + options + pathIN + "/" + file.Name + " /o " + pathOUT + "/" + file.NameNoExtension() + ".exe";
+		string command = "cl " + options + pathIN + "/" + file.name() + " /o " + pathOUT + "/" + file.nameNoExtension() + ".exe";
 		string task = preCommand + " && " + command;
 		int code = system(task.c_str());
 		return code == 0;
@@ -54,14 +54,14 @@ public:
 
     bool compileFileGPP(const File& file, const string& pathIN, const string& pathOUT) const {
         const string options = getExtraOptions(config.getGPPExtraOptions());
-		string command = "g++ " + options + "-g " + pathIN + "/" + file.Name + " -o " + pathOUT + "/" + file.NameNoExtension() + ".exe";
+		string command = "g++ " + options + "-g " + pathIN + "/" + file.name() + " -o " + pathOUT + "/" + file.nameNoExtension() + ".exe";
 		int code = system(command.c_str());
 		return code == 0;
 	}
 
     bool compileFileJAVA(const File& file, const string& pathIN, const string& pathOUT) const {
         const string options = getExtraOptions(config.getJavaExtraOptions());
-		string command = "javac " + options + pathIN + "/" + file.Name + " -d " + pathOUT;
+		string command = "javac " + options + pathIN + "/" + file.name() + " -d " + pathOUT;
 		int code = system(command.c_str());
 		return code == 0;
 	}
@@ -79,13 +79,13 @@ public:
     }
 
     bool runTestCPP(const File& file, const string& pathIN, const string& pathOUT) {
-        string command = file.Path + " < " + pathIN + " > " + pathOUT;
+        string command = file.path() + " < " + pathIN + " > " + pathOUT;
 		int code = system(command.c_str());
         return code == 0;
     }
 
     bool runTestJAVA(const File& file, const string& pathIN, const string& pathOUT) {
-        string command = "java -classpath " + file.ParentPath + " " + file.NameNoExtension() + " < " + pathIN + " > " + pathOUT;
+        string command = "java -classpath " + file.parentpath() + " " + file.nameNoExtension() + " < " + pathIN + " > " + pathOUT;
 		int code = system(command.c_str());
         return code == 0;
     }
@@ -96,15 +96,15 @@ private:
 	const Configuration& config;
 
 	RSCompilerType getTestType(const File& file) const {
-		if (file.Extension == ".exe")
+		if (file.extension() == ".exe")
 			return ANY_CPP;
-		if (file.Extension == ".class")
+		if (file.extension() == ".class")
 			return JAVA;
 		return UNKNOWN;
 	}
 
     RSCompilerType getCompilerType(const File& file) const {
-        if (file.Extension == ".cpp") {
+        if (file.extension() == ".cpp") {
 #if _WINDOWS_
 			if (FSManager::exists(FSManager::fixPath(config.getMVSCommandLineToolsPath() + "/" + VSDevCmd))) {
 				return MVSCPP;
@@ -114,10 +114,10 @@ private:
 			return GPP;
 #endif
 		}
-        if (file.Extension == ".java")
+        if (file.extension() == ".java")
             return JAVA;
 #if _WINDOWS_
-        if (file.Extension == ".sln")
+        if (file.extension() == ".sln")
             return MVSCPP;
 #endif
         return UNKNOWN;

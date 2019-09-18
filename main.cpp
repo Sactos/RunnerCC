@@ -2,6 +2,7 @@
 #include "Configuration.cpp"
 #include "RunnerSystem.cpp"
 #include "RunnerException.cpp"
+#include "StreambufDoubler.cpp"
 #include <iostream>
 
 constexpr auto IN_PATH = "./in";
@@ -10,6 +11,7 @@ constexpr auto EXP_PATH = "./exp/";
 constexpr auto PROJECT_PATH = "./exercise";
 constexpr auto BIN_PATH = "./bin";
 constexpr auto CONFIG_PATH = "./settings.config";
+constexpr auto RESULT_PATH = "./result.txt";
 
 void init() {
 	bool result = true;
@@ -19,12 +21,13 @@ void init() {
 	result |= FSManager::createFolder(EXP_PATH);
 	result |= FSManager::createFolder(PROJECT_PATH);
 	result |= FSManager::createFolder(BIN_PATH);
+    result |= FSManager::createFile(RESULT_PATH);
 	if (!result) {
 		throw RunnerException("ERROR: No se pudieron crear los directorios necesarios o alguno de sus archivos de configuracion.");
 	}
 }
 
-void compileCPLUSPLUS(RunnerSystem& rcc) {
+void compile(RunnerSystem& rcc) {
     vector<string> extensions{".cpp", ".java"};
 	auto file = FSManager::getFirstFileInFolder(PROJECT_PATH, extensions);
 	if (file == nullptr) {
@@ -64,18 +67,18 @@ void run(Configuration& config, RunnerSystem& rcc) {
     unsigned int countErrors = 0;
     unsigned int notFound = 0;
     for (auto& fileIN : *filesIN) {
-        std::cout << "Ejecutando: " << fileIN.Name << "... ";
-        auto fileOUT = FSManager::fixPath(OUT_PATH + fileIN.NameWithOut(config.getFileInExtension()) + config.getFileOutExtension());
-        bool result = rcc.runTest(*exe, fileIN.Path, fileOUT);
+        std::cout << "Ejecutando: " << fileIN.name() << "... ";
+        auto fileOUT = FSManager::fixPath(OUT_PATH + fileIN.nameWithOut(config.getFileInExtension()) + config.getFileOutExtension());
+        bool result = rcc.runTest(*exe, fileIN.path(), fileOUT);
         std::cout << "Finalizado (" << result << "/1)" << std::endl;
-        std::cout << "Verificando: " << fileIN.Name << "... ";
+        std::cout << "Verificando: " << fileIN.name() << "... ";
 		if (!result) {
 			countErrors++;
 			std::cout << "NO SE PUDO EJECUTAR LA APLICACION" << std::endl;
 			std::cout << "-------------------------------------------------" << std::endl;
 			continue;
 		}
-		auto fileEXP = FSManager::fixPath(EXP_PATH + fileIN.NameWithOut(config.getFileInExtension()) + config.getFileExpExtension());
+		auto fileEXP = FSManager::fixPath(EXP_PATH + fileIN.nameWithOut(config.getFileInExtension()) + config.getFileExpExtension());
         if (!FSManager::exists(fileEXP)) {
             notFound++;
             std::cout << "NO SE ENCONTRO EL ARCHIVO EXP CORRESPONDIENTE" << std::endl;
@@ -83,7 +86,7 @@ void run(Configuration& config, RunnerSystem& rcc) {
             continue;
         }
         auto errors = std::make_shared<vector<unsigned int>>();
-        result = FSManager::sameContent(fileOUT, fileEXP, *errors);
+        result = File::sameContent(fileOUT, fileEXP, *errors);
         if (result) {
             std::cout << "OK" << std::endl;
         } else {
@@ -98,11 +101,19 @@ void run(Configuration& config, RunnerSystem& rcc) {
 }
 
 int main(int argc, char **argv) {
-	Configuration config = Configuration::Load(CONFIG_PATH);
+	Configuration config = Configuration::load(CONFIG_PATH);
     RunnerSystem rcc = RunnerSystem(config);
 	try {
 		init();
-		compileCPLUSPLUS(rcc);
+
+        //CONFIG OUTPUT
+        auto resultFile = FSManager::getFile(RESULT_PATH);
+        resultFile.clear();
+        auto resultOutput = std::ofstream(resultFile.path(), std::ofstream::out);
+        StreambufDoubler doubler(std::cout.rdbuf(), resultOutput.rdbuf());
+        std::cout.rdbuf(&doubler);
+
+		compile(rcc);
         run(config, rcc);
 	} catch (RunnerException& e) {
 		std::cout << e.what() << std::endl;
