@@ -45,4 +45,3 @@ RunnerCC siempre intentara usar el compilador Visual C++ si se define un path va
 
 * Detección de paquetes Java. (**nota:** esto se podría lograr iterando en todas las carpetas pero no estoy completamente seguro como detectar el punto de entrada de la aplicación.)
 * Detección de main a la hora de compilar para permitir multiples archivos.
-* Colocar el resultado de la ejecución del RunnerCC en un archivo.
