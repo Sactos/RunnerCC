@@ -18,6 +18,19 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Configuration.cpp" />
+    <ClCompile Include="src\File.cpp" />
+    <ClCompile Include="src\FSManager.cpp" />
+    <ClCompile Include="src\Interpreters\CPP.cpp" />
+    <ClCompile Include="src\Interpreters\Interpreter.cpp" />
+    <ClCompile Include="src\Interpreters\Java.cpp" />
+    <ClCompile Include="src\Interpreters\VisualCPP.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\RunnerException.cpp" />
+    <ClCompile Include="src\RunnerSystem.cpp" />
+    <ClCompile Include="src\StreambufDoubler.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{C811DBB1-9E1F-4994-BFA9-274FD0902180}</ProjectGuid>
@@ -107,15 +120,6 @@
       <PreprocessorDefinitions>_WINDOWS_;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="Configuration.cpp" />
-    <ClCompile Include="File.cpp" />
-    <ClCompile Include="FSManager.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="RunnerException.cpp" />
-    <ClCompile Include="RunnerSystem.cpp" />
-    <ClCompile Include="StreambufDoubler.cpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
