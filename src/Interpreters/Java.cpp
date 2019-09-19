@@ -5,7 +5,11 @@
 
 class Java : public Interpreter {
 public:
-    Java(Configuration& c) : _config(c), _packageName(""), _packageRoot("") { }
+    Java(Configuration& c) : 
+        _config(c), 
+        _packageName(""), 
+        _packageRoot(""),
+        _packageFile("") { }
 
     bool compileFile(const File& file, const std::string& pathIN, const std::string& pathOUT) override {
         const File& validFile = FSManager::getFile(pathIN + "/" + file.name());
@@ -17,6 +21,7 @@ public:
         if (code == 0) {
             findPackage(validFile);
             _packageRoot = pathOUT;
+            _packageFile = file.nameNoExtension();
             return true;
         }
 		return false;
@@ -26,7 +31,7 @@ public:
         std::string classFile = file.nameNoExtension();
         std::string classRoot = file.parentpath();
         if(_packageName != "") {
-            classFile = _packageName + "." + file.nameNoExtension();
+            classFile = _packageName + "." + _packageFile;
             classRoot = _packageRoot;
         }
 
@@ -52,6 +57,7 @@ private:
 	const Configuration& _config;
     std::string _packageName;
     std::string _packageRoot;
+    std::string _packageFile;
 
     void findPackage(const File& file) {
         auto lines = file.read();

@@ -19,13 +19,29 @@ public:
     virtual bool isInterpreterAvailable() const = 0;
 
 protected:
-    const string getExtraOptions(const std::string& options) const {
+    virtual std::string getMainName() const = 0;
+
+    const std::string getExtraOptions(const std::string& options) const {
         if (options == "") {
             return "";
         }
         return "" + options + " ";
     }
 
+    auto findMainFile(const std::string& path, const std::string& extension) {
+        auto extensions = std::vector<std::string> { extension };
+        auto files = FSManager::getFilesInFolder(path, extensions, true);
+        for (auto file : *files) {
+            auto lines = file.read();
+            for (auto line : *lines) {
+                auto index = line.find(getMainName());
+                if (index != std::string::npos) {
+                    return std::make_unique<File>(File(file));
+                }
+            }
+        }
+        return nullptr;
+    }
 };
 
 #endif
