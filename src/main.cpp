@@ -67,7 +67,7 @@ void run(Configuration& config, RunnerSystem& rcc) {
     std::cout << "-------------------------------------------------" << std::endl;
     unsigned int countErrors = 0;
     unsigned int notFound = 0;
-    for (auto& fileIN : *filesIN) {
+    for (auto fileIN : *filesIN) {
         std::cout << "Ejecutando: " << fileIN.name() << "... ";
         auto fileOUT = FSManager::fixPath(OUT_PATH + fileIN.nameWithOut(config.getFileInExtension()) + config.getFileOutExtension());
         bool result = rcc.runTest(*exe, fileIN.path(), fileOUT);
@@ -95,8 +95,13 @@ void run(Configuration& config, RunnerSystem& rcc) {
             std::cout << "ERROR EN LINEA: " << errors->front() << std::endl;
         }
         std::cout << "-------------------------------------------------" << std::endl;
+        if(config.getTestEndOnError() && countErrors > 0) {
+            break;
+        }
     }
-    std::cout << "OK (" << ((filesIN->size() - countErrors) - notFound) << "/" << filesIN->size() << ")" << std::endl;
+    if(!config.getTestEndOnError() || countErrors == 0) {
+        std::cout << "OK (" << ((filesIN->size() - countErrors) - notFound) << "/" << filesIN->size() << ")" << std::endl;
+    }
     std::cout << "ERRORES (" << countErrors << "/" << filesIN->size() << ")" << std::endl;
     std::cout << "EXP NO ENCONTRADOS (" << notFound << "/" << filesIN->size() << ")" << std::endl;
 }
