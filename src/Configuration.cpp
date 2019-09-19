@@ -25,7 +25,7 @@ public:
 		return _data.at("Compiler:MVSCPPExtraOptions");
 	}
 
-	const bool getCloseImmediatelyUponEnd() const {
+	bool getCloseImmediatelyUponEnd() const {
 		return _data.at("Other:CloseImmediatelyUponEnd") == "true";
 	}
 
@@ -41,6 +41,10 @@ public:
 		return _data.at("File:ExpExtension");
 	}
 
+    bool getTestEndOnError() const {
+		return _data.at("Test:EndOnError") == "true";
+	}
+
 	static const Configuration load(const std::string& path) {
         std::map<const std::string, std::string> defaultConfig{
             {"Compiler:MVSCommandLineToolsPath","C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\Common7\\Tools\\"},
@@ -50,7 +54,8 @@ public:
             {"Other:CloseImmediatelyUponEnd", "false"},
     		{"File:InExtension", ".in.txt"},
 		    {"File:OutExtension", ".out.txt"},
-		    {"File:ExpExtension", ".xp.txt"},
+		    {"File:ExpExtension", ".out.txt"},
+            {"Test:EndOnError", "false"}
         };
         auto file = FSManager::getFile(path);
 		Configuration config = Configuration(defaultConfig);

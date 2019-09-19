@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="src\Configuration.cpp" />
+    <ClCompile Include="src\File.cpp" />
+    <ClCompile Include="src\FSManager.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\RunnerException.cpp" />
+    <ClCompile Include="src\RunnerSystem.cpp" />
+    <ClCompile Include="src\StreambufDoubler.cpp" />
+    <ClCompile Include="src\Interpreters\CPP.cpp">
+      <Filter>Interpreters</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Interpreters\VisualCPP.cpp">
+      <Filter>Interpreters</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Interpreters\Java.cpp">
+      <Filter>Interpreters</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Interpreters\Interpreter.cpp">
+      <Filter>Interpreters</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Interpreters">
+      <UniqueIdentifier>{ec3bc141-efd9-4173-8087-5247b46ebbd2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
