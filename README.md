@@ -2,6 +2,9 @@
 
 Esta pequeña aplicación tiene como objetivo, facilita el proceso de ejecución y comparación de resultados de las pruebas del obligatorio de Algoritmos 2.
 
+* [Descargar](https://github.com/Sactos/RunnerCC/releases)
+
+
 **Actualmente soporta los siguientes compiladores:**
 
 * G++
