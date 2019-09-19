@@ -25,16 +25,24 @@ public:
         }
     }
 
-	bool compileFile(const File& file, const string& pathIN, const string& pathOUT) {
+    virtual ~RunnerSystem() {
+        while(!_interpreters.empty()) {
+            auto interpreter = _interpreters.back();
+            _interpreters.pop_back();
+            delete interpreter;
+        }
+    }
+
+	bool compileFile(const File& file, const std::string& pathIN, const std::string& pathOUT) const {
         for(auto interpreter : _interpreters) {
             if(interpreter->isCompilable(file)) {
-                return interpreter->compileFile(file, pathIN, pathOUT);
+                return interpreter->compile(pathIN, pathOUT);
             }
         }
         return false;
 	}
 
-    bool runTest(const File& file, const string& pathIN, const string& pathOUT) {
+    bool runTest(const File& file, const std::string& pathIN, const std::string& pathOUT) const {
         for(auto interpreter : _interpreters) {
             if(interpreter->isTestable(file)) {
                 return interpreter->runTest(file, pathIN, pathOUT);

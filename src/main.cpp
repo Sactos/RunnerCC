@@ -4,6 +4,8 @@
 #include "RunnerException.cpp"
 #include "StreambufDoubler.cpp"
 #include <iostream>
+#include <string>
+using std::string;
 
 constexpr auto IN_PATH = "./in";
 constexpr auto OUT_PATH = "./out/";
@@ -30,10 +32,10 @@ void compile(RunnerSystem& rcc) {
     std::vector<string> extensions{".cpp", ".java"};
 	auto file = FSManager::getFirstFileInFolder(PROJECT_PATH, extensions);
 	if (file == nullptr) {
-		throw RunnerException("ERROR: No hay archivos validos para compilar dentro de la carpeta cpp.");
+		throw RunnerException("ERROR: No hay archivos validos para compilar dentro de la carpeta exercise.");
 	}
 	if (!FSManager::clearFolder(BIN_PATH)) {
-		throw RunnerException("ERROR: No se pudieron borrar los compilados (.exe) dentro de la carpeta bin.");
+		throw RunnerException("ERROR: No se pudieron borrar los compilados dentro de la carpeta bin.");
 	}
     std::cout << "Compilando Archivos..." << std::endl;
     std::cout << "-------------------------------------------------" << std::endl;
@@ -59,7 +61,7 @@ void run(Configuration& config, RunnerSystem& rcc) {
         throw RunnerException("ERROR: No se encontró el ejecutable dentro de la carpeta bin.");
     }
     if (!FSManager::clearFolder(OUT_PATH)) {
-        throw RunnerException("ERROR: No se pudieron borrar los resultados de salida anteriores (out).");
+        throw RunnerException("ERROR: No se pudieron borrar los archivos dentro de la carpeta out.");
     }
     std::cout << "Ejecutando Pruebas... Pruebas a ejecutar: " << filesIN->size() << std::endl;
     std::cout << "-------------------------------------------------" << std::endl;
