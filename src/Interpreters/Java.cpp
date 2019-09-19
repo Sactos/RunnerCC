@@ -5,43 +5,37 @@
 
 class Java : public Interpreter {
 public:
-    Java(Configuration& c) : _config(c), _packageName(""), _packageRoot("") { }
+    Java(Configuration& c) : _config(c), _packageName(""), _packageRoot(""), _packageFile("") { 
+        this->_extensionCompile = std::make_unique<std::vector<std::string>>();
+        this->_extensionCompile->push_back(".java");
+        this->_extensionTest = std::make_unique<std::vector<std::string>>();
+        this->_extensionTest->push_back(".class");
+        this->_mainName = "public static void main";
+    }
 
-    bool compileFile(const File& file, const std::string& pathIN, const std::string& pathOUT) override {
-        const File& validFile = FSManager::getFile(pathIN + "/" + file.name());
-
+    bool compileFile(const File& file, const std::string& pathOUT) override {
         const std::string& options = getExtraOptions(_config.getJavaExtraOptions());
-		const std::string& command = "javac " + options + validFile.path() + " -d " + pathOUT;
-
+		const std::string& command = "javac " + options + file.path() + " -d " + pathOUT;
 		int code = system(command.c_str());
         if (code == 0) {
-            findPackage(validFile);
+            findPackage(file);
             _packageRoot = pathOUT;
+            _packageFile = file.nameNoExtension();
             return true;
         }
 		return false;
     }
 
-    bool runTest(const File& file, const std::string& pathIN, const std::string& pathOUT) override {
+    bool runTest(const File& file, const std::string& pathIN, const std::string& pathOUT) const override {
         std::string classFile = file.nameNoExtension();
         std::string classRoot = file.parentpath();
         if(_packageName != "") {
-            classFile = _packageName + "." + file.nameNoExtension();
+            classFile = _packageName + "." + _packageFile;
             classRoot = _packageRoot;
         }
-
         const std::string& command = "java -classpath " + classRoot + " " + classFile + " < " + pathIN + " > " + pathOUT;
-        
 		int code = system(command.c_str());
         return code == 0;
-    }
-
-    bool isTestable(const File& file) const override { 
-        return file.extension() == ".class";
-    }
-
-    bool isCompilable(const File& file) const override { 
-        return file.extension() == ".java";
     }
 
     bool isInterpreterAvailable() const override { 
@@ -52,6 +46,7 @@ private:
 	const Configuration& _config;
     std::string _packageName;
     std::string _packageRoot;
+    std::string _packageFile;
 
     void findPackage(const File& file) {
         auto lines = file.read();
