@@ -27,15 +27,21 @@ Carpeta | Campo | Valor Inicial | Ejemplo
 **Compiler:GPPExtraOptions**|Aquí puede agregar parámetros extra que se utilizaran a la hora de compilar el ejercicio con g++. || ```-std=c++17 -lstdc++fs```
 **Compiler:JavaExtraOptions**|Aquí puede agregar parámetros extra que se utilizaran a la hora de compilar el ejercicio con Java.|| ```-O -depend```
 **Compiler:MVSCPPExtraOptions**|Aquí puede agregar parámetros extra que se utilizaran a la hora de compilar el ejercicio con Visual C++.|| ```-std=c++17 -lstdc++fs```
-**Compiler:MVSCommandLineToolsPath**|Aquí se debe colocar el path a la **carpeta** que contiene el ```VsDevCmd.bat``` que es **obligatorio** si desea utilizar el compilador de Visual C++ ||```C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\Common7\Tools\```
+**Compiler:MVSCommandLineToolsPath**|Aquí se debe colocar el path a la **carpeta** que contiene el ```VsDevCmd.bat``` que es **obligatorio** si desea utilizar el compilador de Visual C++ |```C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\Common7\Tools\```
 **File:ExpExtension**|Extension de los archivos que contienen el resultado esperado.|**.xp.txt**|
-**File:InExtension**|Extension de los archivos de entrada.|**.in.txt**|
+**File:InExtension**|Extension de los archivos de entrada.|**.out.txt**|
 **File:OutExtension**|Extension de los archivos de salida.|**.out.txt**|
 **Other:CloseImmediatelyUponEnd**|Si desea que RunnerCC se cierre inmediatamente al correr todas las pruebas o no.|**false**| ```false``` O ```true```
+**Test:EndOnError**|Automáticamente termina la ejecución de las pruebas a la primera, a la primera que falle.|**false**| ```false``` O ```true```
+
+## Consideraciones
+
+* El resultado de la ejecución de RunnerCC es almacenado en el archivo `result.txt` este se genera en la carpeta que se encuentra el RunnerCC.
+* Para garantizar la correcta compilación del ejercicio, trate de que su código este contenido en un solo archivo.
 
 ## Consideraciones Java
 
-Es necesario que todas las clases no se encuentren en **ningún** paquete para el correcto funcionamiento de el RunnerCC.
+~~Es necesario que todas las clases no se encuentren en **ningún** paquete para el correcto funcionamiento de el RunnerCC.~~ Soporte inicial de paquetes agregado.
 
 ## Consideraciones Windows
 
@@ -43,5 +49,4 @@ RunnerCC siempre intentara usar el compilador Visual C++ si se define un path va
 
 ## Backlog
 
-* Configuracion si una prueba falla terminar la ejecucion.
-* Detección de main a la hora de compilar para permitir multiples archivos.
+-------
