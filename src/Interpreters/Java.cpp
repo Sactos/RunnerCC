@@ -6,10 +6,10 @@
 class Java : public Interpreter {
 public:
     Java(Configuration& c) : _config(c), _packageName(""), _packageRoot(""), _packageFile("") { 
-        this->_extensionCompile = std::make_unique<std::vector<std::string>>();
-        this->_extensionCompile->push_back(".java");
-        this->_extensionTest = std::make_unique<std::vector<std::string>>();
-        this->_extensionTest->push_back(".class");
+        this->_codeExtension = std::make_unique<std::vector<std::string>>();
+        this->_codeExtension->push_back(".java");
+        this->_programExtension = std::make_unique<std::vector<std::string>>();
+        this->_programExtension->push_back(".class");
         this->_mainName = "public static void main";
     }
 

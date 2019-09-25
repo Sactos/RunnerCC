@@ -28,7 +28,7 @@ void init() {
 	}
 }
 
-void compile(RunnerSystem& rcc) {
+auto compile(RunnerSystem& rcc) {
     std::vector<string> extensions{".cpp", ".java"};
 	auto file = FSManager::getFirstFileInFolder(PROJECT_PATH, extensions);
 	if (file == nullptr) {
@@ -39,7 +39,8 @@ void compile(RunnerSystem& rcc) {
 	}
     std::cout << "Compilando Archivos..." << std::endl;
     std::cout << "-------------------------------------------------" << std::endl;
-	bool result = rcc.compileFile(*file, PROJECT_PATH, BIN_PATH);
+    auto interpreter = rcc.interpreter(file->extension());
+    bool result = interpreter->compile(PROJECT_PATH, BIN_PATH);
     if (result) {
         std::cout << "-------------SE COMPILO CORRECTAMENTE------------" << std::endl;
     }
@@ -47,18 +48,14 @@ void compile(RunnerSystem& rcc) {
     if (!result) {
         throw RunnerException("ERROR: No se pudo compilar el ejercicio.");
     }
+    return interpreter;
 }
 
-void run(Configuration& config, RunnerSystem& rcc) {
+void run(Configuration& config, Interpreter* interpreter) {
     std::vector<string> extensionsIN{ config.getFileInExtension() };
     auto filesIN = FSManager::getFilesInFolder(IN_PATH, extensionsIN);
     if (filesIN == nullptr || filesIN->size() == 0) {
         throw RunnerException("ERROR: No hay archivos de entrada en la carpeta in.");
-    }
-    std::vector<string> extension{".exe", ".class"};
-	auto exe = FSManager::getFirstFileInFolder(BIN_PATH, extension, true);
-    if (exe == nullptr) {
-        throw RunnerException("ERROR: No se encontró el ejecutable dentro de la carpeta bin.");
     }
     if (!FSManager::clearFolder(OUT_PATH)) {
         throw RunnerException("ERROR: No se pudieron borrar los archivos dentro de la carpeta out.");
@@ -70,7 +67,7 @@ void run(Configuration& config, RunnerSystem& rcc) {
     for (auto fileIN : *filesIN) {
         std::cout << "Ejecutando: " << fileIN.name() << "... ";
         auto fileOUT = FSManager::fixPath(OUT_PATH + fileIN.nameWithOut(config.getFileInExtension()) + config.getFileOutExtension());
-        bool result = rcc.runTest(*exe, fileIN.path(), fileOUT);
+        bool result = interpreter->runTest(BIN_PATH, fileIN.path(), fileOUT);
         std::cout << "Finalizado (" << result << "/1)" << std::endl;
         std::cout << "Verificando: " << fileIN.name() << "... ";
 		if (!result) {
@@ -119,8 +116,8 @@ int main(int argc, char **argv) {
     RunnerSystem rcc = RunnerSystem(config);
 	try {
 		init();
-		compile(rcc);
-        run(config, rcc);
+		auto interpreter = compile(rcc);
+        run(config, interpreter);
 	} catch (RunnerException& e) {
 		std::cout << e.what() << std::endl;
 	}
