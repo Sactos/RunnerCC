@@ -33,22 +33,13 @@ public:
         }
     }
 
-	bool compileFile(const File& file, const std::string& pathIN, const std::string& pathOUT) const {
-        for(auto interpreter : _interpreters) {
-            if(interpreter->isCompilable(file)) {
-                return interpreter->compile(pathIN, pathOUT);
+    Interpreter* interpreter(const std::string& extension) const {
+        for (auto interpreter : _interpreters) {
+            if (interpreter->isCompilable(extension)) {
+                return interpreter;
             }
         }
-        return false;
-	}
-
-    bool runTest(const File& file, const std::string& pathIN, const std::string& pathOUT) const {
-        for(auto interpreter : _interpreters) {
-            if(interpreter->isTestable(file)) {
-                return interpreter->runTest(file, pathIN, pathOUT);
-            }
-        }
-        return false;
+        return nullptr;
     }
 
 private:

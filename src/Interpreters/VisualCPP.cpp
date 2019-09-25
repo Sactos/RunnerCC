@@ -6,20 +6,20 @@
 class VisualCPP : public CPP {
 public:
     VisualCPP() : _config(Configuration()) {
-        this->_extensionCompile = std::make_unique<std::vector<std::string>>();
-        this->_extensionCompile->push_back(".cpp");
-        //this->_extensionCompile->push_back(".sln");
-        this->_extensionTest = std::make_unique<std::vector<std::string>>();
-        this->_extensionTest->push_back(".exe");
+        this->_codeExtension = std::make_unique<std::vector<std::string>>();
+        this->_codeExtension->push_back(".cpp");
+        //this->_codeExtension->push_back(".sln");
+        this->_programExtension = std::make_unique<std::vector<std::string>>();
+        this->_programExtension->push_back(".exe");
         this->_mainName = "int main";
     }
 
     VisualCPP(Configuration& c) : _config(c) { 
-        this->_extensionCompile = std::make_unique<std::vector<std::string>>();
-        this->_extensionCompile->push_back(".cpp");
-        //this->_extensionCompile->push_back(".sln");
-        this->_extensionTest = std::make_unique<std::vector<std::string>>();
-        this->_extensionTest->push_back(".exe");
+        this->_codeExtension = std::make_unique<std::vector<std::string>>();
+        this->_codeExtension->push_back(".cpp");
+        //this->_codeExtension->push_back(".sln");
+        this->_programExtension = std::make_unique<std::vector<std::string>>();
+        this->_programExtension->push_back(".exe");
         this->_mainName = "int main";
     }
 
@@ -43,8 +43,8 @@ public:
     }
 
 private:
-	const Configuration& _config;
-    const std::string& VSDevCmd = "VsDevCmd.bat";
+	const Configuration _config;
+    const std::string VSDevCmd = "VsDevCmd.bat";
 
 };
 

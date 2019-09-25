@@ -6,18 +6,18 @@
 class CPP : public Interpreter {
 public:
     CPP() : _config(Configuration()) {
-        this->_extensionCompile = std::make_unique<std::vector<std::string>>();
-        this->_extensionCompile->push_back(".cpp");
-        this->_extensionTest = std::make_unique<std::vector<std::string>>();
-        this->_extensionTest->push_back(".exe");
+        this->_codeExtension = std::make_unique<std::vector<std::string>>();
+        this->_codeExtension->push_back(".cpp");
+        this->_programExtension = std::make_unique<std::vector<std::string>>();
+        this->_programExtension->push_back(".exe");
         this->_mainName = "int main";
     }
 
     CPP(Configuration& c) : _config(c) { 
-        this->_extensionCompile = std::make_unique<std::vector<std::string>>();
-        this->_extensionCompile->push_back(".cpp");
-        this->_extensionTest = std::make_unique<std::vector<std::string>>();
-        this->_extensionTest->push_back(".exe");
+        this->_codeExtension = std::make_unique<std::vector<std::string>>();
+        this->_codeExtension->push_back(".cpp");
+        this->_programExtension = std::make_unique<std::vector<std::string>>();
+        this->_programExtension->push_back(".exe");
         this->_mainName = "int main";
     }
 
@@ -40,7 +40,7 @@ public:
     }
 
 private:
-	const Configuration& _config;
+	const Configuration _config;
 };
 
 #endif
