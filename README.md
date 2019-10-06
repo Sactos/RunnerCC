@@ -48,4 +48,4 @@ RunnerCC siempre intentara usar el compilador Visual C++ si se define un path va
 
 ## Backlog
 
--------
+* Agregar soporte para Mac
