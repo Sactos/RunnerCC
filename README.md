@@ -42,14 +42,10 @@ Carpeta | Campo | Valor Inicial | Ejemplo
 * El resultado de la ejecución de RunnerCC es almacenado en el archivo `result.txt` este se genera en la carpeta que se encuentra el RunnerCC.
 * Para garantizar la correcta compilación del ejercicio, trate de que su código este contenido en un solo archivo.
 
-## Consideraciones Java
-
-~~Es necesario que todas las clases no se encuentren en **ningún** paquete para el correcto funcionamiento de el RunnerCC.~~ Soporte inicial de paquetes agregado.
-
 ## Consideraciones Windows
 
 RunnerCC siempre intentara usar el compilador Visual C++ si se define un path valido, en cualquier otro caso utilizara g++.
 
 ## Backlog
 
--------
+* Agregar soporte para Mac
