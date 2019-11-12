@@ -2,7 +2,7 @@
 #include "Configuration.cpp"
 #include "RunnerSystem.cpp"
 #include "RunnerException.cpp"
-#include "StreambufDoubler.cpp"
+#include "StreambufferDoubler.cpp"
 #include <iostream>
 #include <string>
 using std::string;
@@ -109,7 +109,7 @@ int main(int argc, char **argv) {
     auto resultFile = FSManager::getFile(RESULT_PATH);
     resultFile.clear();
     auto resultOutput = std::ofstream(resultFile.path(), std::ofstream::out);
-    StreambufDoubler doubler(std::cout.rdbuf(), resultOutput.rdbuf());
+    StreambufferDoubler doubler(std::cout.rdbuf(), resultOutput.rdbuf());
     std::cout.rdbuf(&doubler);
 
 	Configuration config = Configuration::load(CONFIG_PATH);
