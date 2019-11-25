@@ -5,7 +5,7 @@
             "name": "G++ Debug Main",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceRoot}/Linux/Debug/main.exe",
+            "program": "${workspaceRoot}/Linux/Debug/Main.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/Linux",

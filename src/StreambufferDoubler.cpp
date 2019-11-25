@@ -1,13 +1,13 @@
-#ifndef STREAMBUFFERDOUBER_CPP
-#define STREAMBUFFERDOUBER_CPP
+#ifndef STREAM_BUFFER_DOUBLER_CPP
+#define STREAM_BUFFER_DOUBLER_CPP
 
 #include <fstream>
 #include <vector>
 #include <assert.h> 
 
-class StreambufferDoubler : public std::streambuf {
+class StreamBufferDoubler : public std::streambuf {
 public:
-    StreambufferDoubler(std::streambuf* buf1, std::streambuf* buf2) :
+    StreamBufferDoubler(std::streambuf* buf1, std::streambuf* buf2) :
             _buffer1(buf1), _buffer2(buf2), _buffer(128)
     {
         assert(_buffer1 && _buffer2);
@@ -16,7 +16,7 @@ public:
         setp(_buffer.data(), _buffer.data() + _buffer.size());
     }
 
-    ~StreambufferDoubler() {
+    ~StreamBufferDoubler() {
         sync();
     }
 

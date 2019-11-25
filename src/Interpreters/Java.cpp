@@ -5,7 +5,7 @@
 
 class Java : public Interpreter {
 public:
-    Java(Configuration& c) : _config(c), _packageName(""), _packageRoot(""), _packageFile("") { 
+    Java(const Configuration& c) : _config(c), _packageName(""), _packageRoot(""), _packageFile("") { 
         this->_codeExtension = std::make_unique<std::vector<std::string>>();
         this->_codeExtension->push_back(".java");
         this->_programExtension = std::make_unique<std::vector<std::string>>();

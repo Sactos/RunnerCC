@@ -5,7 +5,7 @@
 #include "Configuration.cpp"
 #include "RunnerSystem.cpp"
 #include "RunnerException.cpp"
-#include "StreambufferDoubler.cpp"
+#include "StreamBufferDoubler.cpp"
 #include <iostream>
 #include <string>
 
@@ -22,7 +22,7 @@ struct SingleClientSettings {
 
 class SingleClient {
 public:
-    SingleClient(SingleClientSettings& settings) {
+    SingleClient(const SingleClientSettings& settings) {
         this->in_path = settings.IN_PATH;
         this->out_path = settings.OUT_PATH;
         this->exp_path = settings.EXP_PATH;
@@ -31,14 +31,17 @@ public:
         this->result_path = FSManager::fixPath(settings.RESULT_PATH + RESULT_FILE);
         this->interpreter = nullptr;
         this->rcc = nullptr;
+        this->resultOutput = nullptr;
+        this->doubler = nullptr;
     }
 
     virtual ~SingleClient() {
         if (this->rcc != nullptr) {
             delete this->rcc;
         }
-        if (this->interpreter != nullptr) {
-            delete this->interpreter;
+        if (this->doubler != nullptr) {
+            delete this->doubler;
+            delete this->resultOutput;
         }
     }
 
@@ -46,9 +49,9 @@ public:
         FSManager::createFile(this->result_path);
         auto resultFile = FSManager::getFile(this->result_path);
         resultFile.clear();
-        auto resultOutput = std::ofstream(resultFile.path(), std::ofstream::out);
-        StreambufferDoubler doubler(out.rdbuf(), resultOutput.rdbuf());
-        std::cout.rdbuf(&doubler);
+        this->resultOutput = new std::ofstream(resultFile.path(), std::ofstream::out);
+        this->doubler = new StreamBufferDoubler(out.rdbuf(), resultOutput->rdbuf());
+        std::cout.rdbuf(doubler);
     }
 
     void init() {
@@ -65,10 +68,11 @@ public:
         this->was_initialized = true;
     }
 
-    void compile() {
+    void compile(const Configuration& config) {
         if (!this->was_initialized) {
             throw RunnerException("ERROR: Debe ejecutar init() de SingleClient antes llamar al metodo compile().");
         }
+        this->rcc = new RunnerSystem(config);
         std::vector<std::string> extensions{".cpp", ".java"};
         auto file = FSManager::getFirstFileInFolder(this->project_path, extensions);
         if (file == nullptr) {
@@ -79,7 +83,7 @@ public:
         }
         std::cout << "Compilando Archivos..." << std::endl;
         std::cout << "-------------------------------------------------" << std::endl;
-        auto interpreter = this->rcc->interpreter(file->extension());
+        this->interpreter = this->rcc->interpreter(file->extension());
         bool result = interpreter->compile(this->project_path, this->bin_path);
         if (result) {
             std::cout << "-------------SE COMPILO CORRECTAMENTE------------" << std::endl;
@@ -89,10 +93,9 @@ public:
             throw RunnerException("ERROR: No se pudo compilar el ejercicio.");
         }
         this->was_compiled = true;
-        this->interpreter = interpreter;
     }
 
-    void run(Configuration& config) {
+    void run(const Configuration& config) {
         if (!this->was_compiled) {
             throw RunnerException("ERROR: Debe ejecutar compile() de SingleClient antes llamar al metodo run().");
         }
@@ -160,6 +163,9 @@ private:
 
     RunnerSystem* rcc;
     Interpreter* interpreter;
+
+    std::ofstream* resultOutput;
+    StreamBufferDoubler* doubler;
 };
 
 #endif
