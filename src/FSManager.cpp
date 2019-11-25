@@ -6,7 +6,6 @@
 #include <memory>
 #include <fstream>
 #include <algorithm>
-#include <filesystem>
 #if _WINDOWS_ 
 	#define _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
 	/*#include <filesystem>
