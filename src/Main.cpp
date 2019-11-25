@@ -16,6 +16,7 @@ int main(int argc, char **argv) {
     SingleClient client(settings);
     if (number == 1) {
         clients.push_back(client);
+        clients[0].setFileCout(std::cout);
     } else {
         client.setFileCout(std::cout);
         for (int i = 1; i <= number; i++) {
@@ -33,10 +34,9 @@ int main(int argc, char **argv) {
             clients.push_back(settings);
         }
     }
-
+    
     for (int i = 0; i < number; i++) {
         try {
-            clients[i].setFileCout(std::cout);
             std::cout << "-------------------EJERCICIO: " << (i + 1) << "------------------" << std::endl;
             clients[i].init();
             clients[i].compile(config);
