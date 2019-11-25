@@ -35,6 +35,7 @@ Carpeta | Campo | Valor Inicial | Ejemplo
 **File:InExtension**|Extension de los archivos de entrada.|**.out.txt**|
 **File:OutExtension**|Extension de los archivos de salida.|**.out.txt**|
 **Other:CloseImmediatelyUponEnd**|Si desea que RunnerCC se cierre inmediatamente al correr todas las pruebas o no.|**false**| ```false``` O ```true```
+**Other:ExercisesNumber**|Numero de ejercicios que se evaluaran, si es mayor a 1 se generaran carpetas para cada ejercicio.|**1**|
 **Test:EndOnError**|Automáticamente termina la ejecución de las pruebas a la primera, a la primera que falle.|**false**| ```false``` O ```true```
 
 ## Consideraciones
