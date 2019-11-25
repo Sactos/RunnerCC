@@ -1,13 +1,20 @@
 #ifndef FSMANAGER_CPP
 #define FSMANAGER_CPP
 
-#include "File.cpp"
-#include <experimental/filesystem>
 #include <string>
 #include <vector>
 #include <memory>
 #include <fstream>
 #include <algorithm>
+#include <filesystem>
+#if _WINDOWS_ 
+	#define _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
+	/*#include <filesystem>
+	namespace fs = std::filesystem;*/
+#endif
+#include <experimental/filesystem>
+#include "File.cpp"
+
 namespace fs = std::experimental::filesystem;
 
 namespace FSManager {

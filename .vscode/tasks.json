@@ -17,9 +17,9 @@
             "args": [
                 "-std=c++17",
                 "-g",
-                "${workspaceRoot}/src/main.cpp",
+                "${workspaceRoot}/src/Main.cpp",
                 "-o",
-                "${workspaceRoot}/Linux/Debug/main.exe",
+                "${workspaceRoot}/Linux/Debug/Main.exe",
                 "-lstdc++fs"
             ],
             "options": {
@@ -53,9 +53,9 @@
             "args": [
                 "-std=c++17",
                 "-g",
-                "${workspaceRoot}/src/main.cpp",
+                "${workspaceRoot}/src/Main.cpp",
                 "-o",
-                "${workspaceRoot}/Linux/Release/main.exe",
+                "${workspaceRoot}/Linux/Release/Main.exe",
                 "-lstdc++fs"
             ],
             "options": {

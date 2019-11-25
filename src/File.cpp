@@ -2,10 +2,17 @@
 #define FILE_CPP
 
 #include <string>
-#include <experimental/filesystem>
 #include <vector>
 #include <memory>
 #include <fstream>
+#if _WINDOWS_ 
+	#define _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
+	/*#include <filesystem>
+	namespace fs = std::filesystem;*/
+#endif
+#include <experimental/filesystem>
+
+namespace fs = std::experimental::filesystem;
 
 class File {
 public:

@@ -45,6 +45,10 @@ public:
 		return _data.at("Test:EndOnError") == "true";
 	}
 
+    int getExercisesNumber() const {
+        return std::stoi(_data.at("Other:ExercisesNumber"));
+    }
+
 	static const Configuration load(const std::string& path) {
         std::map<const std::string, std::string> defaultConfig{
             {"Compiler:MVSCommandLineToolsPath","C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\Common7\\Tools\\"},
@@ -52,6 +56,7 @@ public:
             {"Compiler:GPPExtraOptions", ""},
             {"Compiler:MVSCPPExtraOptions", ""},
             {"Other:CloseImmediatelyUponEnd", "false"},
+            {"Other:ExercisesNumber", "1"},
     		{"File:InExtension", ".in.txt"},
 		    {"File:OutExtension", ".out.txt"},
 		    {"File:ExpExtension", ".out.txt"},

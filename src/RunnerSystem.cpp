@@ -11,7 +11,7 @@
 
 class RunnerSystem {
 public:
-	RunnerSystem(Configuration& c) : _config(c) {
+	RunnerSystem(const Configuration& c) : _config(c) {
         auto aspirants = std::vector<Interpreter*>();
         aspirants.push_back(new Java(c));
 #if _WINDOWS_   
