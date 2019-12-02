@@ -42,6 +42,7 @@ Carpeta | Campo | Valor Inicial | Ejemplo
 
 * El resultado de la ejecución de RunnerCC es almacenado en el archivo `result.txt` este se genera en la carpeta que se encuentra el RunnerCC.
 * Para garantizar la correcta compilación del ejercicio, trate de que su código este contenido en un solo archivo.
+* IMPORTANTE: El main de los archivos realizados en C++ debe retornar 0 SIEMPRE.
 
 ## Consideraciones Windows
 
