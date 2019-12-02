@@ -8,17 +8,22 @@ constexpr auto CONFIG_PATH = "./settings.config";
 constexpr auto RESULT_GLOBAL = "./result.txt";
 
 int main(int argc, char **argv) {
+    FSManager::createFile(RESULT_GLOBAL);
+    auto resultFile = FSManager::getFile(RESULT_GLOBAL);
+    resultFile.clear();
+    auto resultOutput = std::ofstream(resultFile.path(), std::ofstream::out);
+    StreamBufferDoubler doubler(std::cout.rdbuf(), resultOutput.rdbuf());
+    std::cout.rdbuf(&doubler);
+
     Configuration config = Configuration::load(CONFIG_PATH);
     int number = config.getExercisesNumber();
     number = (number <= 0)? 1 : number;
     std::vector<SingleClient> clients;
     SingleClientSettings settings;
-    SingleClient* client = new SingleClient(settings);
+    SingleClient client(settings);
     if (number == 1) {
-        clients.push_back(*client);
-        client->setFileCout(std::cout);
+        clients.push_back(client);
     } else {
-        client->setFileCout(std::cout);
         for (int i = 1; i <= number; i++) {
             auto folder = "./" + std::to_string(i);
             if (!FSManager::exists(folder)) {
