@@ -13,12 +13,12 @@ int main(int argc, char **argv) {
     number = (number <= 0)? 1 : number;
     std::vector<SingleClient> clients;
     SingleClientSettings settings;
-    SingleClient client(settings);
+    SingleClient* client = new SingleClient(settings);
     if (number == 1) {
-        clients.push_back(client);
-        clients[0].setFileCout(std::cout);
+        clients.push_back(*client);
+        client->setFileCout(std::cout);
     } else {
-        client.setFileCout(std::cout);
+        client->setFileCout(std::cout);
         for (int i = 1; i <= number; i++) {
             auto folder = "./" + std::to_string(i);
             if (!FSManager::exists(folder)) {

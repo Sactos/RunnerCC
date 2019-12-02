@@ -29,6 +29,7 @@
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\RunnerException.cpp" />
     <ClCompile Include="src\RunnerSystem.cpp" />
+    <ClCompile Include="src\SingleClient.cpp" />
     <ClCompile Include="src\StreamBufferDoubler.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
